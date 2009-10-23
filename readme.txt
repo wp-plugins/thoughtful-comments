@@ -9,6 +9,10 @@ Thoughtful Comments adds advanced front end comment moderation and cool thread a
 
 == Description ==
 
+Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms.
+
+Features:
+
 **Front-end comment moderation**
 
 **Unapproved comments shown in front-end**
