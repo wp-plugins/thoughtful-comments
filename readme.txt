@@ -40,6 +40,13 @@ If you want to get the most correct display when deleting a comment and preservi
 
 Thoughtful Comments assumes that each comment is contained in some HTML element with unique ID which is containing the comment ID, so it works with most of the themes.
 
+
+== Screenshots ==
+
+1. The front end comment moderation which editor and admin users are able to see and use.
+2. Number of unapproved comments shown for editor and admin users in the frontend. The number is highlighted as there are some unapproved comments and there's a tooltip.
+3. Per-user moderation settings.
+
 == Frequently Asked Questions ==
 
 [Support](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/)
