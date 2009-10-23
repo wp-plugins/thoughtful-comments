@@ -10,7 +10,9 @@ Thoughtful Comments adds advanced front end comment moderation and cool thread a
 == Description ==
 
 **Front-end comment moderation**
+
 **Unapproved comments shown in front-end**
+
 **Per-user moderation settings**
 
 All of these features apply to logged in editors and administrators only!
