@@ -5,7 +5,7 @@ Requires at least: 2.7
 Tested up to: 2.8.4
 Stable tag: trunk
 
-Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms.
+Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms to your Wordpress blog.
 
 == Description ==
 
