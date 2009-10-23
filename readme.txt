@@ -1,4 +1,4 @@
-=== FV All in One SEO Pack ===
+=== Thoughtful Comments ===
 Contributors: FolioVision
 Tags: comments,moderation,frontend,unapproved
 Requires at least: 2.7
