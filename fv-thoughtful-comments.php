@@ -3,7 +3,7 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin. + comment notifications
-Version: 0.1
+Version: 0.1.5
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
@@ -30,7 +30,7 @@ The users cappable of moderate_comments are getting all of these features and ar
 /**
  * @package foliovision-tc
  * @author Foliovision <programming@foliovision.com>
- * version 0.1
+ * version 0.1.5
  */  
 
 class fv_tc {
@@ -56,14 +56,14 @@ class fv_tc {
      * @global object Current comment object
      * @global object Post object associated with the current comment
      * 
-     * @todo Delete thread options should be displayed only if the comment has some children, but that may be too much for the SQL server 
+     * @todo Delete thread options should be displayed only fif the comment has some children, but that may be too much for the SQL server 
      *          
      * @return array Comment actions array with our new items in it.               
      */              
     function admin($actions) {
         global $comment, $post;/*, $_comment_pending_count;*/
         
-        if ( current_user_can('moderate_comments', $post->ID) ) {
+        if ( current_user_can('edit_post', $post->ID) ) {
             /*  If the IP isn't on the blacklist yet, display delete and ban ip link  */
             $banned = stripos(trim(get_option('blacklist_keys')),$comment->comment_author_IP);
             $child = $this->comment_has_child($comment->comment_ID);
@@ -162,11 +162,11 @@ class fv_tc {
     * @return string Comment text with added features. 
     */
     function frontend ($content) {
-        global  $user_ID, $comment;
+        global  $user_ID, $comment, $post;
         $user_info = get_userdata($comment->user_id);
         $child = $this->comment_has_child($comment->comment_ID);
 
-        if($user_ID && current_user_can('moderate_comments') && !is_admin()) { 
+        if($user_ID && current_user_can('edit_post', $post->ID) && !is_admin()) { 
           /*  Container   */
         	$out = '<p class="tc-frontend">';
         	/* Approve comment */
@@ -336,15 +336,15 @@ class fv_tc {
     * @global int Current user ID        
     */
     function scripts() {
-        global  $user_ID;
-        if($user_ID && current_user_can('moderate_comments')) {
+        global  $user_ID, $post;
+        if($user_ID && current_user_can('edit_post', $post->ID) ) {
             wp_enqueue_script('fv_tc',$this->url. '/js/fv_tc.js',array('jquery'));
         }
     }
     
     
     /**
-    * Filter for comments_number. Shows number of unapproved comments for every article in the frontend if the user can edit posts.
+    * Filter for comments_number. Shows number of unapproved comments for every article in the frontend if the user can edit the post. In WP, all the unapproved comments are shown both to contributors and authors in wp-admin, but we don't do that in frontend.
     *
     * @global int Current user ID
     * @global object Current post object
@@ -357,7 +357,7 @@ class fv_tc {
         global  $user_ID;
         global  $post;
         
-        if($user_ID && current_user_can('moderate_comments')) {
+        if($user_ID && current_user_can('edit_post', $post->ID)) {
             if(function_exists('get_comments'))
                 $comments = get_comments( array('post_id' => $post->ID, 'order' => 'ASC', 'status' => 'hold') );
             /*  Legacy WP support */
@@ -378,14 +378,16 @@ class fv_tc {
      * Styling for the plugin
      */
     function styles() {
-        if(!is_admin() && current_user_can('moderate_comments')) {
+    		global $post;
+    		//	this is executed in the header, so we can't do the check for every post on index/archive pages, so we better load styles if there are any unapproved comments to show. it's loaded even for contributors which don't need it.
+    		if(!is_admin() && current_user_can('edit_posts')) {
           echo '<link rel="stylesheet" href="'.$this->url.'/css/frontend.css" type="text/css" media="screen" />'; 
         }
     }         
     
     
     /**
-     * Shows unapproved comments bellow posts if user can moderate_comments. Hooked to comments_array.
+     * Shows unapproved comments bellow posts if user can moderate_comments. Hooked to comments_array. In WP, all the unapproved comments are shown both to contributors and authors in wp-admin, but we don't do that in frontend.
      * 
      * @param array $comments Original array of the post comments, that means only the approved comments.
      * @global int Current user ID.
@@ -398,7 +400,7 @@ class fv_tc {
         global  $post;
         
         /*  Check user permissions */
-        if($user_ID && current_user_can('moderate_comments')) { 
+        if($user_ID && current_user_can('edit_post', $post->ID)) { 
             /*  Use the standard WP function to get the comments  */
             if(function_exists('get_comments'))
                 $comments = get_comments( array('post_id' => $post->ID, 'order' => 'ASC') );
