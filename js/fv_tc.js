@@ -1,5 +1,6 @@
 /*  approve/disapprove comment  */
-function fv_tc_approve (id,url) {    
+function fv_tc_approve (id,url) { 
+        jQuery("#comment-"+id+"-approve").text('Wait... | ');   
         jQuery.get(url, { id: id, cmd: "approve" },
             function(data){
                 jQuery("#comment-body-"+id).children(":first").text('');

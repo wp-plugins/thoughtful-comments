@@ -3,7 +3,7 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin. + comment notifications
-Version: 0.1.5
+Version: 0.2
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
@@ -129,10 +129,10 @@ class fv_tc {
      * 
      * @return number of child comments
      */                                            
-    function comment_has_child($id) {
+    function comment_has_child($id, $postid) {
         global  $wpdb;
-        return $wpdb->get_var("SELECT count(comment_ID) FROM {$wpdb->comments} WHERE comment_parent = '{$id}'");
-    }    
+        return $wpdb->get_var("SELECT comment_ID FROM {$wpdb->comments} WHERE comment_post_id = '{$postid}' AND comment_parent = '{$id}' LIMIT 1");
+    } 
     
     
     /**
@@ -164,9 +164,9 @@ class fv_tc {
     function frontend ($content) {
         global  $user_ID, $comment, $post;
         $user_info = get_userdata($comment->user_id);
-        $child = $this->comment_has_child($comment->comment_ID);
 
         if($user_ID && current_user_can('edit_post', $post->ID) && !is_admin()) { 
+          $child = $this->comment_has_child($comment->comment_ID, $comment->comment_post_ID);
           /*  Container   */
         	$out = '<p class="tc-frontend">';
         	/* Approve comment */
