@@ -3,7 +3,7 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin. + comment notifications
-Version: 0.2
+Version: 0.2.1
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
@@ -66,7 +66,7 @@ class fv_tc {
         if ( current_user_can('edit_post', $post->ID) ) {
             /*  If the IP isn't on the blacklist yet, display delete and ban ip link  */
             $banned = stripos(trim(get_option('blacklist_keys')),$comment->comment_author_IP);
-            $child = $this->comment_has_child($comment->comment_ID);
+            $child = $this->comment_has_child($comment->comment_ID, $comment->comment_post_ID);
             if($banned===FALSE)
                 $actions['delete_ban'] = $this->get_t_delete_ban($comment);
             else
