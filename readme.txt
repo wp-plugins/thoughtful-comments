@@ -51,6 +51,7 @@ Thoughtful Comments assumes that each comment is contained in some HTML element 
 
 = 0.2.2 =
 * better operation with trashed comments and parent - child comment relations (will preserve this relation even when restoring a trashed comment)
+* fixed bug in unapproved comment hilight
 
 = 0.2.1 =
 * Minor bug fix
