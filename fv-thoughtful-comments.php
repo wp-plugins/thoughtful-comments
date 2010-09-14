@@ -3,7 +3,7 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin. + comment notifications
-Version: 0.2.1
+Version: 0.2.2
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
@@ -385,6 +385,41 @@ class fv_tc {
         }
     }         
     
+    /**
+     * Call hooks for when a comment status transition occurs.
+     *
+     * @param string $new_status New comment status.
+     * @param string $old_status Previous comment status.
+     * @param object $comment Comment data.
+     */
+    function transition_comment_status( $new_status, $old_status, $comment ) {
+      global $wpdb;
+      
+      if( $old_status == 'trash' && $new_status != 'spam' ) { //  restoring comment
+          $children = get_comment_meta( $comment->comment_ID, 'children', true );
+          if( $children && is_array( $children ) ) {
+            $children = implode( ',', $children );
+            $wpdb->query( "UPDATE $wpdb->comments SET comment_parent = '{$comment->comment_ID}' WHERE comment_ID IN ({$children}) " );
+          }
+          delete_comment_meta( $comment->comment_ID, 'children' );
+      }
+      
+      if( $new_status == 'trash' ) {  //  trashing comment
+        if( function_exists( 'update_comment_meta' ) ) {  //  store children in meta
+          $children = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_parent = '{$comment->comment_ID}' " );
+          if( $children ) {
+            update_comment_meta( $comment->comment_ID, 'children', $children );
+          }
+        } //  assign new parents
+        $wpdb->query( "UPDATE $wpdb->comments SET comment_parent = '{$comment->comment_parent}' WHERE comment_parent = '{$comment->comment_ID}' " );
+  
+        /*var_dump( $old_status );
+        echo ' -> ';
+        var_dump( $new_status );  //  approved
+        die();*/
+      }
+    }
+    
     
     /**
      * Shows unapproved comments bellow posts if user can moderate_comments. Hooked to comments_array. In WP, all the unapproved comments are shown both to contributors and authors in wp-admin, but we don't do that in frontend.
@@ -471,6 +506,9 @@ add_action('wp_print_styles', array( $fv_tc, 'styles' ) );
 
 /* Show unapproved comments bellow posts */
 add_filter( 'comments_array', array( $fv_tc, 'unapproved' ) ); 
+
+/* Bring back children of deleted comments */
+add_action( 'transition_comment_status', array( $fv_tc, 'transition_comment_status' ), 1000, 3 );
 
 /*  Experimental stuff  */
 
