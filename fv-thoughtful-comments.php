@@ -367,7 +367,7 @@ class fv_tc {
             }
             $count = count($comments);
             if($count!= 0) {
-                return '<span class="tc_highlight"><abbr title="This post has '.$count.' unapproved comments">'.str_replace(' comm','/'.$count.'</abbr></span> comm',$content).'';
+                return '<span class="tc_highlight"><abbr title="This post has '.$count.' unapproved comments">'.str_ireplace(' comm','/'.$count.'</abbr></span> comm',$content).'';
                 }
         }
         return $content;
