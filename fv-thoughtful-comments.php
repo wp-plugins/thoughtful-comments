@@ -130,8 +130,22 @@ class fv_tc {
      * @return number of child comments
      */                                            
     function comment_has_child($id, $postid) {
-        global  $wpdb;
+        global $wp_query;
+        
+        ///  addition  2010/06/02 - check if you have comments filled in
+        if ($wp_query->comments != NULL ) {
+          foreach( $wp_query->comments AS $comment ) {
+            if( $comment->comment_parent == $id ) {
+              return true; 
+            }
+          }
+        }
+        return false;
+        
+        //  forget about the database!
+        /*global  $wpdb;
         return $wpdb->get_var("SELECT comment_ID FROM {$wpdb->comments} WHERE comment_post_id = '{$postid}' AND comment_parent = '{$id}' LIMIT 1");
+        */
     } 
     
     
