@@ -49,6 +49,10 @@ Thoughtful Comments assumes that each comment is contained in some HTML element 
 
 == Changelog ==
 
+= 0.2.3 =
+* bug fix of admin js
+* more features coming in 0.3!
+
 = 0.2.2 =
 * better operation with trashed comments and parent - child comment relations (will preserve this relation even when restoring a trashed comment)
 * fixed bug in unapproved comment hilight

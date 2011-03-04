@@ -3,7 +3,7 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin.
-Version: 0.2.2
+Version: 0.2.3
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
@@ -345,13 +345,14 @@ class fv_tc {
         
         
     /**
-    * Action for wp_print_scripts - enqueues plugin js which is dependend on jquery 
+    * Action for wp_print_scripts - enqueues plugin js which is dependend on jquery. Improved in 0.2.3  ////
     * 
     * @global int Current user ID        
     */
     function scripts() {
         global  $user_ID, $post;
-        if($user_ID && current_user_can('edit_post', $post->ID) ) {
+        $user_info = get_userdata( $user_ID );
+        if($user_ID && ( current_user_can('edit_post', $post->ID) || $user_info->wp_user_level > 5 ) ) {
             wp_enqueue_script('fv_tc',$this->url. '/js/fv_tc.js',array('jquery'));
         }
     }
