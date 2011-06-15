@@ -3,14 +3,14 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin.
-Version: 0.2.3
+Version: 0.2.3.1
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
 The users cappable of moderate_comments are getting all of these features and are not blocked 
 */
 
-/*  Copyright 2009  Foliovision  (email : programming@foliovision.com)
+/*  Copyright 2011  Foliovision  (email : programming@foliovision.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,10 +30,12 @@ The users cappable of moderate_comments are getting all of these features and ar
 /**
  * @package foliovision-tc
  * @author Foliovision <programming@foliovision.com>
- * version 0.1.5
+ * version 0.2.3.1
  */  
 
-class fv_tc {
+include( 'fp-api.php' );
+
+class fv_tc extends fv_tc_Plugin {
     /**
      * Plugin directory URI
      * @var string
@@ -45,6 +47,8 @@ class fv_tc {
      */         
     function __construct(){ 
         $this->url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
+        $this->readme_URL = 'http://plugins.trac.wordpress.org/browser/thoughtful-comments/trunk/readme.txt?format=txt';    
+    	  add_action( 'in_plugin_update_message-thoughtful-comments/fv-thoughtful-comments.php', array( &$this, 'plugin_update_message' ) );        
     }
     
     
@@ -382,7 +386,9 @@ class fv_tc {
             }
             $count = count($comments);
             if($count!= 0) {
-                return '<span class="tc_highlight"><abbr title="This post has '.$count.' unapproved comments">'.str_ireplace(' comm','/'.$count.'</abbr></span> comm',$content).'';
+                //return '<span class="tc_highlight"><abbr title="This post has '.$count.' unapproved comments">'.str_ireplace(' comm','/'.$count.'</abbr></span> comm',$content).'';
+                $content = preg_replace( '~(\d+)~', '<span class="tc_highlight"><abbr title="This post has '.$count.' unapproved comments">$1</abbr></span>', $content );
+                return $content;
                 }
         }
         return $content;
