@@ -3,7 +3,7 @@
 Plugin Name: Thoughtful Comments
 Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin.
-Version: 0.2.3.1
+Version: 0.2.3.2
 Author: Foliovision
 Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
@@ -404,7 +404,18 @@ class fv_tc extends fv_tc_Plugin {
     		if(!is_admin() && current_user_can('edit_posts')) {
           echo '<link rel="stylesheet" href="'.$this->url.'/css/frontend.css" type="text/css" media="screen" />'; 
         }
-    }         
+    }        
+    
+
+    /**
+     * Thesis is not using comment_text filter. It uses thesis_hook_after_comment action, so this outputs our links
+     *
+     * @param string $new_status Empty string.
+     */    
+    function thesis_frontend_show($content) {
+        echo $this->frontend($content);
+    }
+         
     
     /**
      * Call hooks for when a comment status transition occurs.
@@ -511,6 +522,9 @@ add_filter( 'manage_users_custom_column', array( $fv_tc, 'column_content' ), 10,
 
 /* Add frontend moderation options */
 add_filter( 'comment_text', array( $fv_tc, 'frontend' ) );
+
+/* Thesis theme fix */
+add_action( 'thesis_hook_after_comment', array( $fv_tc, 'thesis_frontend_show' ), 1 );
 
 /* Approve comment if user is set out of moderation queue */
 add_filter( 'pre_comment_approved', array( $fv_tc, 'moderate' ) );
