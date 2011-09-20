@@ -2,7 +2,7 @@
 Contributors: FolioVision
 Tags: comments,moderation,frontend,unapproved
 Requires at least: 2.7
-Tested up to: 3.1.3
+Tested up to: 3.2.1
 Stable tag: trunk
 
 Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms to your Wordpress blog.
