@@ -523,7 +523,7 @@ add_filter( 'manage_users_columns', array( $fv_tc, 'column' ) );
 add_filter( 'manage_users_custom_column', array( $fv_tc, 'column_content' ), 10, 3 );
 
 /* Add frontend moderation options */
-add_filter( 'comment_text', array( $fv_tc, 'frontend' ) );
+add_filter( 'get_comment_text', array( $fv_tc, 'frontend' ) );
 
 /* Thesis theme fix */
 add_action( 'thesis_hook_after_comment', array( $fv_tc, 'thesis_frontend_show' ), 1 );
