@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Thoughtful Comments
-Plugin URI: http://foliovision.com/
+Plugin Name: FV Thoughtful Comments
+Plugin URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin.
 Version: 0.2.3.3
 Author: Foliovision
-Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
+Author URI: http://foliovision.com/
 
 The users cappable of moderate_comments are getting all of these features and are not blocked 
 */
