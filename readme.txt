@@ -1,15 +1,15 @@
-=== Thoughtful Comments ===
+=== FV Thoughtful Comments ===
 Contributors: FolioVision
 Tags: comments,moderation,frontend,unapproved
 Requires at least: 2.7
 Tested up to: 3.3.1
 Stable tag: trunk
 
-Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms to your Wordpress blog.
+FV Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms to your Wordpress blog.
 
 == Description ==
 
-Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms.
+FV Thoughtful Comments adds advanced front end comment moderation and cool thread and user banning mechanisms.
 
 Features:
 
@@ -38,7 +38,7 @@ You can modify the CSS file in the plugin (/wp-content/plugins/thoughtful-commen
 
 If you want to get the most correct display when deleting a comment and preserving it's replies, you need to use a theme which is using "cascade" display of the comments instead of "nested" display. 
 
-Thoughtful Comments assumes that each comment is contained in some HTML element with unique ID which is containing the comment ID, so it works with most of the themes.
+FV Thoughtful Comments assumes that each comment is contained in some HTML element with unique ID which is containing the comment ID, so it works with most of the themes.
 
 
 == Screenshots ==
