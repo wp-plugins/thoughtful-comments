@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: FV Thoughtful Comments
-Plugin URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
+Plugin URI: http://foliovision.com/
 Description: Manage incomming comments more effectively by using frontend comment moderation system provided by this plugin.
-Version: 0.2.3.3
+Version: 0.2.4.
 Author: Foliovision
-Author URI: http://foliovision.com/
+Author URI: http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/
 
 The users cappable of moderate_comments are getting all of these features and are not blocked 
 */
@@ -30,7 +30,7 @@ The users cappable of moderate_comments are getting all of these features and ar
 /**
  * @package foliovision-tc
  * @author Foliovision <programming@foliovision.com>
- * version 0.2.3.1
+ * version 0.2.4
  */  
 
 include( 'fp-api.php' );
@@ -50,10 +50,21 @@ class fv_tc extends fv_tc_Plugin {
     function __construct(){ 
         $this->url = trailingslashit( get_bloginfo('wpurl') ).PLUGINDIR.'/'. dirname( plugin_basename(__FILE__) );
         $this->readme_URL = 'http://plugins.trac.wordpress.org/browser/thoughtful-comments/trunk/readme.txt?format=txt';    
-    	  add_action( 'in_plugin_update_message-thoughtful-comments/fv-thoughtful-comments.php', array( &$this, 'plugin_update_message' ) );        
+    	  add_action( 'in_plugin_update_message-thoughtful-comments/fv-thoughtful-comments.php', array( &$this, 'plugin_update_message' ) );    
+        add_action( 'activate_' .plugin_basename(__FILE__), array( $this, 'activate' ) );   
     }
+
+
+    function activate() {
+        if( !get_option('thoughtful_comments') ) update_option( 'thoughtful_comments', array( 'shorten_urls' => true, 'reply_link' => false ) );
+    }
+
     
-    
+    function admin_menu(){
+        add_options_page( 'FV Thoughtful Comments', 'FV Thoughtful Comments', 'manage_options', 'manage_fv_thoughtful_comments', array($this, 'options_panel') );
+    } 
+  
+     
     /**
      * Adds the plugin functions into Comment Moderation in backend. Hooked on comment_row_actions.
      * 
@@ -153,7 +164,21 @@ class fv_tc extends fv_tc_Plugin {
         return $wpdb->get_var("SELECT comment_ID FROM {$wpdb->comments} WHERE comment_post_id = '{$postid}' AND comment_parent = '{$id}' LIMIT 1");
         */
     } 
-    
+
+    /**
+     * Replace url of reply link only with #
+     * functionality is done only by JavaScript     
+     */ 
+    function comment_reply_links ($link = null) {
+        $options = get_option('thoughtful_comments');
+        if ($options['reply_link']) {        
+            $noscript = '<noscript>Reply link does not work in your browser because JavaScript is disabled.<br /></noscript>';
+            $link_script = preg_replace( '~href.*onclick~' , 'href="#" onclick' , $link );
+            return $noscript .  $link_script;               
+        }         
+        return $link;
+    }
+        
     
     /**
      * Clear the URI for use in onclick events.
@@ -349,6 +374,73 @@ class fv_tc extends fv_tc_Plugin {
         return  $approved;
     }
         
+    
+    function options_panel() {
+        if (!empty($_POST)) :
+            check_admin_referer('thoughtful_comments');
+            $options = array(
+                'shorten_urls' => ( $_POST['shorten_urls'] ) ? true : false,            
+                'reply_link' => ( $_POST['reply_link'] ) ? true : false
+            );
+            if( update_option( 'thoughtful_comments', $options ) ) :
+            ?>
+            <div id="message" class="updated fade">
+                <p>
+                    <strong>
+                        Settings saved
+                    </strong>
+                </p>
+            </div>
+            <?php
+            endif;  //  update_option
+        endif;  //  $_POST
+        $options = get_option('thoughtful_comments');
+        ?>
+        <div class="wrap">
+            <div style="position: absolute; right: 20px; margin-top: 5px">
+                <a href="http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments" target="_blank" title="Documentation"><img alt="visit foliovision" src="http://foliovision.com/shared/fv-logo.png" /></a>
+            </div>
+            <div>
+                <div id="icon-options-general" class="icon32"><br /></div>
+                <h2>FV Thoughtful Comments</h2>
+            </div>
+            <form method="post" action="">
+                <?php wp_nonce_field('thoughtful_comments') ?>
+                <div id="poststuff" class="ui-sortable">
+                    <div class="postbox">
+                        <h3>
+                            <?php _e('Comment Tweaks') ?>
+                        </h3>
+                        <div class="inside">
+                            <table class="optiontable form-table">
+                                <tr valign="top">
+                                    <th scope="row"><?php _e('Link shortening', 'wp_mail_smtp'); ?> </th>  
+                                    <td><fieldset><legend class="screen-reader-text"><span><?php _e('Link shortening', 'wp_mail_smtp'); ?></span></legend>                                  
+                                    <input id="shorten_urls" type="checkbox" name="shorten_urls" value="1" 
+                                        <?php if( $options['shorten_urls'] ) echo 'checked="checked"'; ?> />
+                                    <label for="shorten_urls"><span><?php _e('Shortens the plain URL link text in comments to “link to: domain.com”. Prevents display issues if the links have too long URL.', 'wp_mail_smtp'); ?></span></label><br />
+                                    </td>
+                                </tr>
+                                <tr valign="top">
+                                    <th scope="row"><?php _e('Reply link', 'wp_mail_smtp'); ?> </th> 
+                                    <td><fieldset><legend class="screen-reader-text"><span><?php _e('Reply link', 'wp_mail_smtp'); ?></span></legend>                              
+                                    <input id="reply_link" type="checkbox" name="reply_link" value="1" 
+                                        <?php if( $options['reply_link'] ) echo 'checked="checked"'; ?> />                                     
+                                    <label for="reply_link"><span><?php _e('Check to make comment reply links use JavaScript only. Useful if your site has a lot of comments and web crawlers are browsing through all of their reply links.', 'wp_mail_smtp'); ?></span></label><br />
+                                    </td>
+                                </tr>                               
+                            </table>
+                            <p>
+                                <input type="submit" name="fv_feedburner_replacement_submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <?php
+    }
+          
         
     /**
     * Action for wp_print_scripts - enqueues plugin js which is dependend on jquery. Improved in 0.2.3  ////
@@ -508,7 +600,116 @@ class fv_tc extends fv_tc_Plugin {
         echo '<p>'.$args[0].', '.$args[1].', '.$args[2].', '.$args[3].', '.$args[4].', '.$args[5].'</p>';
             
         //die('blacklist dies');
-    }    
+    } 
+    
+    function comment_moderation_headers( $message_headers ) {
+        $options = get_option('thoughtful_comments');
+        if( $options['enhance_notify'] == false && isset( $options['enhance_notify'] ) ) return $message_headers;      
+        $message_headers .= "\r\n"."Content-Type: text/html"; //  this should add up
+        return $message_headers;
+    }
+    
+    function comment_moderation_text( $notify_message ) {
+        $options = get_option('thoughtful_comments');
+        if( $options['enhance_notify'] == false && isset( $options['enhance_notify'] ) ) return $notify_message;        
+        global $wpdb;        
+        preg_match( '~&c=(\d+)~', $notify_message, $comment_id ); //  we must get the comment ID somehow
+        $comment_id = $comment_id[1];        
+        if( intval( $comment_id ) > 0 ) {          
+          /// all links until now are non-html, so we add it now
+      		$notify_message = preg_replace( '~([^"\'])(http://\S*)([^"\'])~', '$1<a href="$2">$2</a>$3', $notify_message );      		      
+          $comment = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_ID=%d LIMIT 1", $comment_id));
+          $post = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID=%d LIMIT 1", $comment->comment_post_ID));
+          $rows = explode( "\n", $comment->comment_content );
+          foreach( $rows AS $key => $value ) {
+            $rows[$key] = '> '.$value;  
+          }
+          $content = "\r\n\r\n".implode( "\n", $rows );
+      		$replyto = 'Reply to comment via email: <a href="mailto:'.rawurlencode('"'.$comment->comment_author.'" ').'<'.$comment->comment_author_email.'>'.'?subject='.rawurlencode( 'Your comment on "'.$post->post_title.'"' ).'&body='.rawurlencode( $content ).'&bcc='.$options['reply_bcc'].'">Email reply</a>'."\r\n";
+      		$linkto .= 'Link to comment: <a href="'.get_permalink($comment->comment_post_ID) . '#comment-'.$comment_id.'">Comment link</a>'."\r\n";
+      		$notify_message = str_replace( 'Approve it:', $replyto."Approve it:", $notify_message );
+      		$notify_message = str_replace( 'Approve it:', $linkto."Approve it:", $notify_message );
+      		$notify_message = wpautop( $notify_message );
+        }
+    		//echo $notify_message; die();
+    		return $notify_message;
+    } 
+    
+    /**
+     * Callback for plain link replacement in links
+     * 
+     * @param string Link
+     * 
+     * @return string New link
+     */ 
+    function comment_links_replace( $link ) {
+      //echo '<!--link'.var_export( $link, true ).'-->';
+      /*if( !stripos( $link[1], '://' ) ) {
+        return $link[0];
+      }*/
+      $match_domain = $link[2];
+      $match_domain = str_replace( '://www.', '://', $match_domain );
+      preg_match( '!//(.+?)/!', $match_domain, $domain );
+      //var_dump( $domain );
+      $link = $link[1].'<a href="'.esc_url($link[2]).'">link to '.$domain[1].'</a><br />'.$link[3];
+      return $link;
+    } 
+    
+    
+    /**
+     * Callback for <a href="LINK">LINK</a> replacement in comments
+     * 
+     * @param string Link
+     * 
+     * @return string New link
+     */     
+    function comment_links_replace_2( $link ) {
+
+      preg_match( '~href=["\'](.*?)["\']~', $link[0], $href );
+      preg_match( '~>(.*?)</a>~', $link[0], $text );
+      if( $href[1] == $text[1] ) {
+        preg_match( '!//(.+?)/!', $text[1], $domain );
+        if( $domain[1] ) {
+          $domain[1] = preg_replace( '~^www\.~', '', $domain[1] );
+          $link[0] = str_replace( $text[1].'</a>', 'link to '.$domain[1].'</a>', $link[0] );
+        }
+      }
+      return $link[0];
+    } 
+    
+    
+    /**
+     * Replace long links with shorter versions
+     * 
+     * @param string Comment text
+     * 
+     * @return string New comments text
+     */         
+    function comment_links( $content ) {
+        $options = get_option('thoughtful_comments');
+        if( $options['shorten_urls'] == false && isset( $options['shorten_urls'] ) ) return $content;      
+        $content = ' ' . $content;        
+
+        $content = preg_replace_callback( '!<a[\s\S]*?</a>!', array(get_class($this), 'comment_links_replace_2' ), $content );
+
+        return $content; 
+    }        
+    
+    function stc_comment_deleted() {
+        global $wp_subscribe_reloaded;
+        if( !is_admin() && $wp_subscribe_reloaded ) {           
+            add_action('deleted_comment', array( $wp_subscribe_reloaded, 'comment_deleted'));
+        }
+    }
+
+
+    function stc_comment_status_changed() {
+        global $wp_subscribe_reloaded;
+        if( !is_admin() && $wp_subscribe_reloaded ) {
+            add_action('wp_set_comment_status', array( $wp_subscribe_reloaded, 'comment_status_changed'));
+        }
+    }
+    
     
 }
 
@@ -524,9 +725,13 @@ add_filter( 'manage_users_custom_column', array( $fv_tc, 'column_content' ), 10,
 
 /* Add frontend moderation options */
 add_filter( 'comment_text', array( $fv_tc, 'frontend' ) );
+/* Shorten plain links */
+add_filter( 'comment_text', array( $fv_tc, 'comment_links' ), 100 );
 
 /* Thesis theme fix */
 add_action( 'thesis_hook_after_comment', array( $fv_tc, 'thesis_frontend_show' ), 1 );
+/* Thesis theme fix */
+add_filter( 'thesis_comment_text', array( $fv_tc, 'comment_links' ), 100 );
 
 /* Approve comment if user is set out of moderation queue */
 add_filter( 'pre_comment_approved', array( $fv_tc, 'moderate' ) );
@@ -553,5 +758,19 @@ add_action( 'transition_comment_status', array( $fv_tc, 'transition_comment_stat
 //add_action( 'wp_blacklist_check', array( $fv_tc, 'blacklist' ), 10, 7 );
 
 endif;
+
+add_filter( 'comment_moderation_headers', array( $fv_tc, 'comment_moderation_headers' ) ); 
+
+add_filter( 'comment_moderation_text', array( $fv_tc, 'comment_moderation_text' ) );
+
+
+/* Fix for Subscribe to Comments Reloaded */
+add_action('deleted_comment', array( $fv_tc, 'stc_comment_deleted'), 0, 1);
+add_action('wp_set_comment_status', array( $fv_tc, 'stc_comment_status_changed'), 0, 1);
+
+
+add_action( 'admin_menu', array($fv_tc, 'admin_menu') ); 
+
+add_filter('comment_reply_link', array($fv_tc, 'comment_reply_links'));
 
 ?>
