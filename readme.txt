@@ -47,7 +47,7 @@ All of these features apply to logged in editors and administrators only!
 
 
 
-[Support](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/) | [Change Log](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/changelog/) | [Installation](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/installation/)| [Usage](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/usage/)
+[Support](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/) | [Change Log](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/changelog/) | [Installation](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/installation/) | [Usage](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/usage/)
 
 
 == Installation ==
