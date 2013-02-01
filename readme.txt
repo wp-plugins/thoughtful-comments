@@ -6,7 +6,7 @@ Tags: comments,moderation,frontend,unapproved
 
 Requires at least: 2.7
 
-Tested up to: 3.3.1
+Tested up to: 3.5.1
 
 Stable tag: trunk
 
@@ -47,14 +47,7 @@ All of these features apply to logged in editors and administrators only!
 
 
 
-[Support](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/) |
-
-[Change Log](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/changelog/) |
-
-[Installation](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/installation/)|
-
-[Usage](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/usage/)
-
+[Support](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/) | [Change Log](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/changelog/) | [Installation](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/installation/)| [Usage](http://foliovision.com/seo-tools/wordpress/plugins/thoughtful-comments/usage/)
 
 
 == Installation ==
